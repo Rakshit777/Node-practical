@@ -30,7 +30,7 @@ export const getProducts = async (page, limit) => {
   const [products] = await pool.query(
     `SELECT *
      FROM products
-     ORDER BY created_at ASC
+     ORDER BY created_at DESC
      LIMIT ? OFFSET ?`,
     [limit, offset]
   );
