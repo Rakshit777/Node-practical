@@ -1,7 +1,7 @@
 import pool from "../db/config.js";
 export function createOrder(conn, userId, total) {
   return conn.query(
-    'INSERT INTO orders (user_id, total_amount, status) VALUES (?, ?, "COMPLETED")',
+    'INSERT INTO orders (user_id, total_amount, status) VALUES (?, ?, "PENDING")',
     [userId, total]
   );
 }

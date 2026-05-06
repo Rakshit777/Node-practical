@@ -1,6 +1,7 @@
 import pool from '../db/config.js';
 import * as productModel from '../models/product.model.js';
 import * as orderModel from '../models/order.model.js';
+import cron from "node-cron";
 
 export const createOrder = async (userId, items) => {
     const conn = await pool.getConnection();
@@ -115,3 +116,20 @@ export const getOrders = async (page, limit) => {
     data: orders
   };
 };
+
+export function updateStatusCron() {
+  cron.schedule("*/5 * * * *", async () => {
+    try {
+      const [result] = await pool.execute(`
+        UPDATE orders
+        SET status = 'COMPLETED'
+        WHERE status = 'PENDING'
+          AND created_at <= NOW() - INTERVAL 5 MINUTE
+      `);
+
+      console.log(`Updated ${result.affectedRows} orders`);
+    } catch (err) {
+      console.error("Cron Error:", err.message);
+    }
+  });
+}

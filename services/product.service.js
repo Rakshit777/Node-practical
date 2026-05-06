@@ -1,3 +1,4 @@
+import pool from '../db/config.js';
 import * as productModel from '../models/product.model.js';
 
 export const createProduct = async (name, price, stock) => {
@@ -22,3 +23,29 @@ export const createProduct = async (name, price, stock) => {
         stock
     };
 };
+
+export const getProducts = async (page, limit) => {
+  const offset = (page - 1) * limit;
+
+  const [products] = await pool.query(
+    `SELECT *
+     FROM products
+     ORDER BY created_at ASC
+     LIMIT ? OFFSET ?`,
+    [limit, offset]
+  );
+
+  const [[countResult]] = await pool.query(
+    `SELECT COUNT(*) as total FROM products`
+  );
+
+  const total = countResult.total;
+
+  return {
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+    data: products
+  }
+}

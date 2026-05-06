@@ -1,5 +1,6 @@
 import {
-  createProduct
+  createProduct,
+  getProducts
 } from "../services/product.service.js";
 
 export async function createProductDetails(req, res) {
@@ -22,3 +23,18 @@ export async function createProductDetails(req, res) {
     });
   }
 }
+
+export async function getProductList(req, res) {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const result = await getProducts(page, limit);
+
+        res.json(result);
+    } catch (err) {
+        res.status(500).json({
+            error: err.message
+        });
+    }
+};
